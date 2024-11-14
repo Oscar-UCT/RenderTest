@@ -3,7 +3,7 @@ import socketserver
 import os
 
 PORT = int(os.environ.get("PORT", 8000))  # Use Render's PORT env variable
-DIRECTORY = "public"
+DIRECTORY = "Turismo Sin Fronteras"
 
 class Handler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
