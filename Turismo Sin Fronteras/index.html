@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turismo Sin Fronteras</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="header.css">
+    <link rel="stylesheet" href="subheader.css">
+    <link rel="stylesheet" href="serviciosOpciones.css">
+    <link rel="stylesheet" href="comidasOpciones.css">
+    <link rel="stylesheet" href="alojamientosOpciones.css">
+    <link rel="stylesheet" href="excursionesOpciones.css">
+    <link rel="stylesheet" href="footer.css">
+    <link rel="stylesheet" href="popup.css">
+    <script defer src="script.js"></script>
+</head>
+
+<body>
+    <div id="cupon-fixed">
+        <div id="cupon-content">
+            <img src="media/AvionLogo01.png" alt="" height="50px" width="50px">
+            <p>Felicidades! Por ser su primera vez con nosotros, ha ganado un cupón de $10.000 válido para cualquier
+                compra.
+            </p>
+            <button class="button-style1" id="aceptar-button">Aceptar</button>
+        </div>
+    </div>
+    <div id="reseña-fixed">
+        <div id="reseña-content">
+            <img src="media/AvionLogo01.png" alt="" height="50px" width="50px">
+            <span id="comidaSeleccion" style="font-size: 30px;">default</span>
+            <h3>Comentarios</h3>
+            <input type="text" placeholder="¡Agrega tu opinión!" style="padding-bottom: 50px; text-align: start;">
+            <div class="stars" style="display: flex;">
+                <img src="./media/star(1).png" alt="" width="30px" class="star">
+                <img src="./media/star(1).png" alt="" width="30px" class="star">
+                <img src="./media/star(1).png" alt="" width="30px" class="star">
+                <img src="./media/star(1).png" alt="" width="30px" class="star">
+                <img src="./media/star(1).png" alt="" width="30px" class="star">
+            </div>
+            <button class="button-style1" id="enviar-button">Enviar</button>
+        </div>
+    </div>
+    <div id="header">
+        <div id="left-side-header">
+            <img id="header-logo" src="media/AvionLogo01.png" alt="" height="32px" width="32px">
+        </div>
+        <div id="right-side-header">
+            <ul>
+                <li><a id="turism-button" href="#">Turismo</a></li>
+                <li><a href="reseñas.html">Reseñas</a></li>
+                <li><a href="#">Excursiones</a></li>
+                <li><a href="#">Comidas</a></li>
+                <li><a href="#">Alojamientos</a></li>
+                <button id="login-button" class="button-style1">Ingresar</button>
+                <button id="register-button" class="button-style2">Registrarse</button>
+            </ul>
+        </div>
+    </div>
+    <div id="sub-header">
+        <h1>Turismo Sin Fronteras</h1>
+        <h2>El viaje que mereces</h2>
+        <div id="sub-header-buttons">
+            <button class="button-style1">Explorar</button>
+            <button class="button-style2">Contáctanos</button>
+        </div>
+    </div>
+    <div id="nuestros-servicios" style="padding: 0px 150px;">
+        <!-- <div style="padding: 0px 150px;"> -->
+        <div id="header-servicios">
+            <h3 style="font-size: 30px; font-weight: 100;">Nuestros servicios</h3>
+            <h4 style="font-weight: 100; color: gray;">Solo en Chile</h4>
+        </div>
+        <div id="botones-servicios">
+            <div class="card-servicios" id="card-comidas">
+                <img src="./media/Restaurant01.jpg" alt="" width="160px" height="150px" style="border-radius: 10px;">
+                <h3>Comidas</h3>
+                <p>Disfruta de platos exclusivos preparados por cocineros nacionales</p>
+                <button id="comida-button" class="button-style1">Explorar</button>
+            </div>
+            <div class="card-servicios" id="card-alojamiento">
+                <img src="./media/fotos_alojamientos/Habitacion01.jpg" alt="" width="160px" height="140px"
+                    style="border-radius: 10px;">
+                <h3>Alojamiento</h3>
+                <p>Hospédate rodeado/a de paisajes increibles con atención exclusiva y servicios de calidad especial
+                </p>
+                <button id="alojamiento-button" class="button-style1">Explorar</button>
+            </div>
+            <div class="card-servicios" id="card-excursiones">
+                <img src="./media/Excursión01.jpg" alt="" width="160px" height="140px" style="border-radius: 10px;">
+                <h3>Excursiones</h3>
+                <p>Explora los lugares más maravillosos de Chile acompañado/a de guías turísticos y otros turistas
+                </p>
+                <button id="excursiones-button" class="button-style1">Explorar</button>
+            </div>
+        </div>
+        <!-- </div> -->
+    </div>
+    <div id="servicio-comida" style="padding: 0px 150px;">
+        <div id="header-comidas">
+            <h3 style="font-size: 30px; font-weight: 700;">Comidas</h3>
+        </div>
+        <div id="botones-comidas">
+            <div class="card-comidas">
+                <img src="./media/fotos_comidas/Parrilla01.jpg" alt="" width="160px" height="150px"
+                    style="border-radius: 10px;">
+                <h3>Asado Familiar - 8 personas</h3>
+                <p>$82.990</p>
+                <button class="reseña-style1" id="comida1"> ⭐4.5</button>
+                <button class="button-style1">Comprar</button>
+            </div>
+            <div class="card-comidas">
+                <img src="./media/fotos_comidas/Completos02.jpg" alt="" width="160px" height="150px"
+                    style="border-radius: 10px;">
+                <h3>Completos - 2 personas</h3>
+                <p>$6.000</p>
+                <button class="reseña-style1" id="comida2"> ⭐4.8</button>
+                <button class="button-style1">Comprar</button>
+            </div>
+
+            <div class="card-comidas">
+                <img src="./media/fotos_comidas/Tacos01.jpg" alt="" width="160px" height="150px"
+                    style="border-radius: 10px;">
+                <h3>Tacos - 2 personas</h3>
+                <p>$7.000</p>
+                <button class="reseña-style1" id="comida3"> ⭐4.7</button>
+                <button class="button-style1">Comprar</button>
+            </div>
+        </div>
+    </div>
+    <div id="servicio-alojamiento" style="padding: 0px 150px;">
+        <div id="header-alojamiento">
+            <h3 style="font-size: 30px; font-weight: 700;">Alojamientos</h3>
+        </div>
+        <div id="botones-alojamientos">
+            <div class="card-alojamientos">
+                <img src="./media/fotos_alojamientos/Habitacion02.jpg" alt="" width="160px" height="150px"
+                    style="border-radius: 10px;">
+                <h3>Habitación - 2 personas</h3>
+                <p>$25.000 Noche ⭐4.7</p>
+                <button class="button-style1">Arrendar</button>
+            </div>
+            <div class="card-alojamientos">
+                <img src="./media/fotos_alojamientos/Habitacion01.jpg" alt="" width="160px" height="150px"
+                    style="border-radius: 10px;">
+                <h3>Casa Familiar - 4 personas</h3>
+                <p>$45.000 Noche ⭐4.7</p>
+                <button class="button-style1">Arrendar</button>
+            </div>
+
+            <div class="card-alojamientos">
+                <img src="./media/fotos_alojamientos/Habitación04.jpg" alt="" width="160px" height="150px"
+                    style="border-radius: 10px;">
+                <h3>Cabaña - 6 personas</h3>
+                <p>$55.000 Noche ⭐4.9</p>
+                <button class="button-style1">Arrendar</button>
+            </div>
+        </div>
+    </div>
+    <div id="servicio-excursiones" style="padding: 0px 150px;">
+        <div id="header-excursiones">
+            <h3 style="font-size: 30px; font-weight: 700;">Excursiones</h3>
+        </div>
+        <div id="botones-excursiones">
+            <div class="card-excursiones">
+                <img src="./media/fotos_excursiones/Andes01.jpg" alt="" width="160px" height="150px"
+                    style="border-radius: 10px;">
+                <h3>Cordillera De Los Andes</h3>
+                <p>$5.000 Adultos ⭐4.9</p>
+                <button class="button-style1">Ver más</button>
+            </div>
+            <div class="card-excursiones">
+                <img src="./media/fotos_excursiones/RioImperial01.jpeg" alt="" width="160px" height="150px"
+                    style="border-radius: 10px;">
+                <h3>Rio Imperial</h3>
+                <p>$3.500 Adultos ⭐4.8</p>
+                <button class="button-style1">Ver más</button>
+            </div>
+
+            <div class="card-excursiones">
+                <img src="./media/fotos_excursiones/TorresPaine01.jpeg" alt="" width="160px" height="150px"
+                    style="border-radius: 10px;">
+                <h3>Torres Del Paine</h3>
+                <p>$4.000 Adultos ⭐5.0</p>
+                <button class="button-style1">Ver más</button>
+            </div>
+        </div>
+    </div>
+    <div id="footer">
+        <h1>Turismo Sin Fronteras</h1>
+    </div>
+
+</body>
+
+</html>
