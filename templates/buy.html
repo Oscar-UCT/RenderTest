@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>Order confirmation</h1>
+    <h2>Tus datos</h2>
+    <p id="reviewer">{{ Order.Name }}</p>
+    <p>{{ Order.Email }}</p>
+    <p>{{ Order.Address }}</p>
+    <h2>Bought product</h2>
+    <p id="product">{{ Order.Product }}</p>
+
+    <h2 id="reviewState">Optional review</h2>
+    <form onsubmit="submitReview(event)" id="reviewForm">
+        <label for="review">Review:</label>
+        <br>
+        <textarea id="review" rows="4" style="width: 300px; padding: 5px; resize: none;" required></textarea>
+        <br>
+        <label for="rating">Rate:</label>
+        <input type="number" id="rating" min="1" max="5" value="5">
+        <br>
+        <button type="submit">Send</button>
+    </form>
+
+    <script>
+        async function submitReview(event) {
+            event.preventDefault(); // Prevent the form's default behavior
+
+            // Hide the form after submission
+            document.getElementById('reviewForm').style.display = 'none';
+            document.getElementById('reviewState').textContent = 'Review sent';
+
+            // Collect the form data
+            const reviewer = document.getElementById('reviewer').textContent; // Assuming it's a text element
+            const reviewContent = document.getElementById('review').value;
+            const rating = parseInt(document.getElementById('rating').value, 10);
+            const product = document.getElementById('product').textContent; // Assuming it's a text element
+
+            // Send the data to the Flask server
+            const response = await fetch('/submit_review', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    reviewer_name: reviewer,
+                    review: reviewContent,
+                    rating: rating,
+                    product_name: product
+                })
+            });
+
+            // Handle response if necessary
+            const result = await response.json();
+            console.log(result.message);
+        }
+    </script>
+</body>
+
+</html>

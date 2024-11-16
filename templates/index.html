@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .product-row {
+            cursor: pointer;
+        }
+
+        .product-row:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Product list</h1>
+    <form method="GET" action="/products" style="margin-bottom: 15px;">
+        <label for="category">Choose a category:</label>
+        <select name="category" id="category">
+            <option value="Electronics">Electronics</option>
+            <option value="Furniture">Furniture</option>
+            <option value="Clothing">Clothing</option>
+        </select>
+        <button type="submit">Filter</button>
+    </form>
+
+    <table border="1" cellspacing="0" cellpadding="8px" style="margin-bottom: 30px;" id="products-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Rating</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if products %}
+            {% for product in products %}
+            <tr class="product-row" onclick="selectProduct('{{ product.name }}', '{{ product.price }}')">
+                <td>{{ product['name'] }}</td>
+                <td>{{ product['category'] }}</td>
+                <td>{{ product['rating'] }}</td>
+                <td>${{ "%.2f"|format(product['price']) }}</td>
+            </tr>
+            {% endfor %}
+            {% else %}
+            <tr>
+                <td colspan="4">Select a category</td>
+            </tr>
+            {% endif %}
+        </tbody>
+    </table>
+
+    <h2>Apply a Coupon</h2>
+    <form id="couponForm" onsubmit="applyCoupon(event)">
+        <label for="coupon">Coupon Code:</label>
+        <input type="text" id="coupon" required>
+        <button type="submit">Apply</button>
+    </form>
+
+    <h2>Buy</h2>
+    <form action="buy-request" method="POST">
+        <label for="product_name">Product:</label>
+        <input type="text" name="product_name" id="selected_product" placeholder="Select a product" readonly required>
+        <br>
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+        <br>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+        <br>
+        <label for="address">Address:</label>
+        <input type="text" id="address" name="address" required>
+        <br>
+        <label for="product_price">Total:</label>
+        <input type="text" name="product_price" id="product_price" placeholder="$0" readonly required>
+        <br>
+        <button type="submit">Buy</button>
+    </form>
+
+    <script>
+        const productPriceText = document.getElementById('product_price');
+        let couponApplied = false;
+        function selectProduct(productName, productPrice) {
+            document.getElementById('selected_product').value = productName;
+            productPriceText.value = "$" + productPrice
+            couponApplied = false;
+        }
+
+        async function applyCoupon(event) {
+            event.preventDefault(); // Prevent page refresh
+
+            const couponCode = document.getElementById('coupon').value;
+
+            const response = await fetch('/apply_coupon', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ coupon_code: couponCode })
+            });
+
+            const result = await response.json();
+
+            if (response.ok && !couponApplied) {
+                if (productPriceText.value != "$0") {
+                    alert(`Coupon applied! Discount: ${result.discount}%`);
+                    let finalPrice = parseInt(productPriceText.textContent.replace("$", ""));
+                    productPriceText.value = `$${finalPrice - finalPrice / 100 * result.discount}`;
+                    couponApplied = true;
+                }
+                else {
+                    alert("Select a product");
+                }
+            } else if (couponApplied) {
+                alert("You have already added a coupon!");
+            }
+            else {
+                alert(result.message);
+            }
+        }
+    </script>
+</body>
+
+</html>
