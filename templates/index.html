@@ -85,10 +85,13 @@
     <script>
         const productPriceText = document.getElementById('product_price');
         let couponApplied = false;
+        let selectedProduct = false;
+
         function selectProduct(productName, productPrice) {
             document.getElementById('selected_product').value = productName;
             productPriceText.value = "$" + productPrice
             couponApplied = false;
+            selectedProduct = true;
         }
 
         async function applyCoupon(event) {
@@ -107,10 +110,13 @@
             const result = await response.json();
 
             if (response.ok && !couponApplied) {
-                if (productPriceText.value != "$0") {
+                if (!selectedProduct) {
                     alert(`Coupon applied! Discount: ${result.discount}%`);
+
                     let finalPrice = parseInt(productPriceText.textContent.replace("$", ""));
+
                     productPriceText.value = `$${finalPrice - finalPrice / 100 * result.discount}`;
+
                     couponApplied = true;
                 }
                 else {
