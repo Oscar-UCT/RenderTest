@@ -4,28 +4,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Compra exitosa</title>
 </head>
 
 <body>
-    <h1>Order confirmation</h1>
+    <h1>Compra confirmada</h1>
     <h2>Tus datos</h2>
     <p id="reviewer">{{ Order.Name }}</p>
     <p>{{ Order.Email }}</p>
     <p>{{ Order.Address }}</p>
-    <h2>Bought product</h2>
+    <h2>Producto comprado</h2>
     <p id="product">{{ Order.Product }}</p>
 
-    <h2 id="reviewState">Optional review</h2>
+    <h2 id="reviewState">¡Valora nuestro producto!</h2>
     <form onsubmit="submitReview(event)" id="reviewForm">
-        <label for="review">Review:</label>
+        <label for="review">Comentarios:</label>
         <br>
         <textarea id="review" rows="4" style="width: 300px; padding: 5px; resize: none;" required></textarea>
         <br>
-        <label for="rating">Rate:</label>
+        <label for="rating">Calificación:</label>
         <input type="number" id="rating" min="1" max="5" value="5">
         <br>
-        <button type="submit">Send</button>
+        <button type="submit">Enviar</button>
     </form>
 
     <script>
@@ -34,7 +34,7 @@
 
             // Hide the form after submission
             document.getElementById('reviewForm').style.display = 'none';
-            document.getElementById('reviewState').textContent = 'Review sent';
+            document.getElementById('reviewState').textContent = '¡Gracias!';
 
             // Collect the form data
             const reviewer = document.getElementById('reviewer').textContent; // Assuming it's a text element

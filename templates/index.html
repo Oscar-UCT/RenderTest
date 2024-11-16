@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Inicio</title>
     <style>
         .product-row {
             cursor: pointer;
@@ -17,24 +17,24 @@
 </head>
 
 <body>
-    <h1>Product list</h1>
+    <h1>Servicios</h1>
     <form method="GET" action="/products" style="margin-bottom: 15px;">
-        <label for="category">Choose a category:</label>
+        <label for="category">Elija una categoría:</label>
         <select name="category" id="category">
-            <option value="Electronics">Electronics</option>
-            <option value="Furniture">Furniture</option>
-            <option value="Clothing">Clothing</option>
+            <option value="Alojamientos">Alojamientos</option>
+            <option value="Comidas">Comidas</option>
+            <option value="Excursiones">Excursiones</option>
         </select>
-        <button type="submit">Filter</button>
+        <button type="submit">Filtrar</button>
     </form>
 
     <table border="1" cellspacing="0" cellpadding="8px" style="margin-bottom: 30px;" id="products-table">
         <thead>
             <tr>
-                <th>Name</th>
-                <th>Category</th>
-                <th>Rating</th>
-                <th>Price</th>
+                <th>Nombre</th>
+                <th>Categoría</th>
+                <th>Valoración</th>
+                <th>Precio</th>
             </tr>
         </thead>
         <tbody>
@@ -44,42 +44,43 @@
                 <td>{{ product['name'] }}</td>
                 <td>{{ product['category'] }}</td>
                 <td>{{ product['rating'] }}</td>
-                <td>${{ "%.2f"|format(product['price']) }}</td>
+                <td>${{ product['price'] }}</td>
             </tr>
             {% endfor %}
             {% else %}
             <tr>
-                <td colspan="4">Select a category</td>
+                <td colspan="4">Seleccione una categoría</td>
             </tr>
             {% endif %}
         </tbody>
     </table>
 
-    <h2>Apply a Coupon</h2>
+    <h2>Aplicar un cupón</h2>
     <form id="couponForm" onsubmit="applyCoupon(event)">
-        <label for="coupon">Coupon Code:</label>
+        <label for="coupon">Código:</label>
         <input type="text" id="coupon" required>
-        <button type="submit">Apply</button>
+        <button type="submit">Aplicar</button>
     </form>
 
-    <h2>Buy</h2>
+    <h2>Comprar</h2>
     <form action="buy-request" method="POST">
-        <label for="product_name">Product:</label>
-        <input type="text" name="product_name" id="selected_product" placeholder="Select a product" readonly required>
+        <label for="product_name">Servicio:</label>
+        <input type="text" name="product_name" id="selected_product" placeholder="Seleccione un producto" readonly
+            required>
         <br>
-        <label for="name">Name:</label>
+        <label for="name">Nombre:</label>
         <input type="text" id="name" name="name" required>
         <br>
-        <label for="email">Email:</label>
+        <label for="email">Correo:</label>
         <input type="email" id="email" name="email" required>
         <br>
-        <label for="address">Address:</label>
+        <label for="address">Dirección:</label>
         <input type="text" id="address" name="address" required>
         <br>
         <label for="product_price">Total:</label>
         <input type="text" name="product_price" id="product_price" placeholder="$0" readonly required>
         <br>
-        <button type="submit">Buy</button>
+        <button type="submit">Comprar</button>
     </form>
 
     <script>
@@ -109,21 +110,21 @@
 
             const result = await response.json();
 
-            if (response.ok && !couponApplied) {
-                if (!selectedProduct) {
-                    alert(`Coupon applied! Discount: ${result.discount}%`);
+            if (response.ok && couponApplied !== true) {
+                if (selectedProduct === true) {
+                    alert(`¡Se ha aplicado un cupón! Descuento: ${result.discount}%`);
 
-                    let finalPrice = parseInt(productPriceText.textContent.replace("$", ""));
+                    let finalPrice = parseInt(productPriceText.value.replace("$", ""));
 
                     productPriceText.value = `$${finalPrice - finalPrice / 100 * result.discount}`;
 
                     couponApplied = true;
                 }
                 else {
-                    alert("Select a product");
+                    alert("Seleccione un producto");
                 }
             } else if (couponApplied) {
-                alert("You have already added a coupon!");
+                alert("¡Ya ha agregado un cupón!");
             }
             else {
                 alert(result.message);
