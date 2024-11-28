@@ -8,13 +8,14 @@ app = Flask(__name__)
 def index():
     return render_template('index.html', products= None)
 
+# Metodo para entregar los productos segun categoria
 @app.route('/products', methods=['GET'])
 def show_products():
     conn = sqlite3.connect('products.db')
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
 
-    category = request.args.get('category')  # Get category from query string
+    category = request.args.get('category')
     cursor.execute('SELECT * FROM products WHERE category = ?', (category,))
 
     products = cursor.fetchall()
@@ -22,7 +23,7 @@ def show_products():
 
     return render_template('index.html', products=products)
 
-
+# Método para guardar el pedido
 @app.route('/buy-request', methods=['POST'])
 def receive_order():
     product = request.form['product_name']
@@ -43,9 +44,10 @@ def receive_order():
     conn.close()
     return render_template("buy.html", Order = Order(product, client_name, client_email, client_address))
 
+# Método para guardar la reseña
 @app.route('/submit_review', methods=['POST'])
 def submit_review():
-    data = request.get_json()  # Parse JSON from the request body
+    data = request.get_json()
     reviewer_name = data.get('reviewer_name')
     review = data.get('review')
     rating = data.get('rating')
@@ -54,7 +56,7 @@ def submit_review():
     if not review or not product or rating is None:
         return jsonify({"message": "Invalid data"}), 400
 
-    # Insert the review into the reviews.db
+
     reviews_conn = sqlite3.connect('reviews.db')
     reviews_cursor = reviews_conn.cursor()
     reviews_cursor.execute(
@@ -63,27 +65,24 @@ def submit_review():
     )
     reviews_conn.commit()
 
-    # Recalculate the average rating for the product in the reviews.db
     reviews_cursor.execute('SELECT AVG(rating) FROM reviews WHERE product = ?', (product,))
     avg_rating = reviews_cursor.fetchone()[0]
 
-    # Connect to products.db to update the product's rating
     products_conn = sqlite3.connect('products.db')
     products_cursor = products_conn.cursor()
 
-    # Update the product's rating in the products table
-    if avg_rating is not None:  # Ensure that we got a valid average rating
+    if avg_rating is not None:
         products_cursor.execute('UPDATE products SET rating = ? WHERE name = ?', (avg_rating, product))
         products_conn.commit()
 
-    # Close both connections
     reviews_conn.close()
     products_conn.close()
 
-    # Respond with a success message
+
     return jsonify({"message": "Review submitted successfully!"}), 200
 
 
+# Método para entregar cupón con su descuento
 @app.route('/apply_coupon', methods=['POST'])
 def apply_coupon():
     data = request.get_json()
@@ -104,22 +103,6 @@ def apply_coupon():
     else:
         return jsonify({"message": "Invalid coupon"}), 404
 
-# Database initialization (run once)
-def init_db():
-    conn = sqlite3.connect('orders.db')
-    cursor = conn.cursor()
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS orders (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT,
-            email TEXT,
-            address TEXT,
-            product TEXT
-        )
-    ''')
-    conn.commit()
-    conn.close()
-
 class Order():
     def __init__(self, product, name, email, address):
         self.Product = product
@@ -129,6 +112,5 @@ class Order():
         pass
 
 if __name__ == '__main__':
-    # init_db()  # Initialize the database
     port = int(os.environ.get('PORT', 5000))
     app.run(debug=True, host='0.0.0.0', port=port)
