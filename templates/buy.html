@@ -5,28 +5,64 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Compra exitosa</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body>
-    <h1>Compra confirmada</h1>
-    <h2>Tus datos</h2>
-    <p id="reviewer">{{ Order.Name }}</p>
-    <p>{{ Order.Email }}</p>
-    <p>{{ Order.Address }}</p>
-    <h2>Producto comprado</h2>
-    <p id="product">{{ Order.Product }}</p>
+<body class="bg-gray-100">
 
-    <h2 id="reviewState">¡Valora nuestro producto!</h2>
-    <form onsubmit="submitReview(event)" id="reviewForm">
-        <label for="review">Comentarios:</label>
-        <br>
-        <textarea id="review" rows="4" style="width: 300px; padding: 5px; resize: none;" required></textarea>
-        <br>
-        <label for="rating">Calificación:</label>
-        <input type="number" id="rating" min="1" max="5" value="5">
-        <br>
-        <button type="submit">Enviar</button>
-    </form>
+    <!-- Header with logo -->
+    <div class="max-w-4xl mx-auto p-6 flex items-center gap-4 mb-6 bg-white shadow-lg rounded-lg">
+        <img src="/static/Logo.png" alt="Logo" class="w-16 h-16">
+        <h1 class="text-xl font-semibold text-gray-800">Turismo Sin Fronteras - Pedido Confirmado</h1>
+    </div>
+
+    <!-- Client info card -->
+    <div id="datos_cliente" class="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg border border-gray-300 mb-6">
+        <p class="text-sm text-gray-600">RUT: <span class="font-semibold text-gray-900">{{ Order.Rut }}</span></p>
+        <p class="text-sm text-gray-600">Nombre: <span class="font-semibold text-gray-900">{{ Order.Name }}</span></p>
+        <p class="text-sm text-gray-600">Correo: <span class="font-semibold text-gray-900">{{ Order.Email }}</span></p>
+        <p class="text-sm text-gray-600">Dirección: <span class="font-semibold text-gray-900">{{ Order.Address }}</span>
+        </p>
+    </div>
+
+    <!-- Product table -->
+    <div class="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg border border-gray-300 mb-6">
+        <table class="min-w-full table-auto border-collapse">
+            <thead class="bg-gray-100">
+                <tr>
+                    <th class="px-4 py-2 text-left text-sm font-medium text-gray-600">Cantidad</th>
+                    <th class="px-4 py-2 text-left text-sm font-medium text-gray-600">Producto</th>
+                    <th class="px-4 py-2 text-left text-sm font-medium text-gray-600">Precio</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="border-t border-gray-200">
+                    <td class="px-4 py-2 text-sm text-gray-700">1</td>
+                    <td class="px-4 py-2 text-sm text-gray-700">{{ Order.Product }}</td>
+                    <td class="px-4 py-2 text-sm text-gray-700">${{ Order.Total }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Review Section -->
+    <div id="reviewForm" class="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg border border-gray-300 mb-6">
+        <h2 id="reviewState" class="text-lg font-semibold text-gray-800 mb-4">Deja una reseña</h2>
+
+        <div>
+            <label for="review" class="block text-sm font-medium text-gray-700">Comentarios:</label>
+            <textarea id="review" rows="4" class="w-full p-2 border-2 border-gray-300 rounded-md resize-none"
+                required></textarea>
+        </div>
+        <div>
+            <label for="rating" class="block text-sm font-medium text-gray-700">Calificación:</label>
+            <input type="number" id="rating" min="1" max="5" value="5"
+                class="w-full p-2 border-2 border-gray-300 rounded-md" required>
+        </div>
+        <button onclick="submitReview(event)"
+            class="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600">Enviar</button>
+    </div>
+
 
     <script>
         async function submitReview(event) {
@@ -37,19 +73,20 @@
             document.getElementById('reviewState').textContent = '¡Gracias!';
 
             // Collect the form data
-            const reviewer = document.getElementById('reviewer').textContent; // Assuming it's a text element
+            const reviewer_name = '{{ Order.Name }}';  // Flask variable for the reviewer name
             const reviewContent = document.getElementById('review').value;
             const rating = parseInt(document.getElementById('rating').value, 10);
-            const product = document.getElementById('product').textContent; // Assuming it's a text element
+            const product = '{{ Order.Product }}';  // Flask variable for the product name
 
             // Send the data to the Flask server
             const response = await fetch('/submit_review', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'  // Add this header
                 },
                 body: JSON.stringify({
-                    reviewer_name: reviewer,
+                    reviewer_name: reviewer_name,
                     review: reviewContent,
                     rating: rating,
                     product_name: product
@@ -61,6 +98,7 @@
             console.log(result.message);
         }
     </script>
+
 </body>
 
 </html>

@@ -5,132 +5,60 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inicio</title>
-    <style>
-        .product-row {
-            cursor: pointer;
-        }
-
-        .product-row:hover {
-            background-color: #f0f0f0;
-        }
-    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body>
-    <h1>Servicios</h1>
-    <form method="GET" action="/products" style="margin-bottom: 15px;">
-        <label for="category">Elija una categoría:</label>
-        <select name="category" id="category">
-            <option value="Alojamientos">Alojamientos</option>
-            <option value="Comidas">Comidas</option>
-            <option value="Excursiones">Excursiones</option>
-        </select>
-        <button type="submit">Filtrar</button>
-    </form>
+<body class="bg-gray-50 font-sans text-gray-900">
 
-    <table border="1" cellspacing="0" cellpadding="8px" style="margin-bottom: 30px;" id="products-table">
-        <thead>
-            <tr>
-                <th>Nombre</th>
-                <th>Categoría</th>
-                <th>Valoración</th>
-                <th>Precio</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% if products %}
-            {% for product in products %}
-            <tr class="product-row" onclick="selectProduct('{{ product.name }}', '{{ product.price }}')">
-                <td>{{ product['name'] }}</td>
-                <td>{{ product['category'] }}</td>
-                <td>{{ product['rating'] }}</td>
-                <td>${{ product['price'] }}</td>
-            </tr>
-            {% endfor %}
-            {% else %}
-            <tr>
-                <td colspan="4">Seleccione una categoría</td>
-            </tr>
-            {% endif %}
-        </tbody>
-    </table>
+    <div id="header" class="bg-gray-200 flex items-center gap-4 p-4 shadow-md rounded-lg">
+        <img src="/static/Logo.png" alt="Logo" width="48px" height="48px">
+        <h1 class="text-xl font-semibold">Turismo Sin Fronteras</h1>
+    </div>
 
-    <h2>Aplicar un cupón</h2>
-    <form id="couponForm" onsubmit="applyCoupon(event)">
-        <label for="coupon">Código:</label>
-        <input type="text" id="coupon" required>
-        <button type="submit">Aplicar</button>
-    </form>
+    <div class="mx-auto my-6 p-6 bg-white rounded-lg shadow-lg w-full max-w-4xl">
+        <h2 class="text-2xl font-semibold mb-4">Servicios</h2>
 
-    <h2>Comprar</h2>
-    <form action="buy-request" method="POST">
-        <label for="product_name">Servicio:</label>
-        <input type="text" name="product_name" id="selected_product" placeholder="Seleccione un producto" readonly
-            required>
-        <br>
-        <label for="name">Nombre:</label>
-        <input type="text" id="name" name="name" required>
-        <br>
-        <label for="email">Correo:</label>
-        <input type="email" id="email" name="email" required>
-        <br>
-        <label for="address">Dirección:</label>
-        <input type="text" id="address" name="address" required>
-        <br>
-        <label for="product_price">Total:</label>
-        <input type="text" name="product_price" id="product_price" placeholder="$0" readonly required>
-        <br>
-        <button type="submit">Comprar</button>
-    </form>
+        <form method="GET" action="/products" class="mb-6 flex items-center gap-4">
+            <label for="category" class="text-sm font-medium">Categoría:</label>
+            <select name="category" id="category"
+                class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="Alojamientos">Alojamientos</option>
+                <option value="Comidas">Comidas</option>
+                <option value="Excursiones">Excursiones</option>
+            </select>
+            <button type="submit"
+                class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">Filtrar</button>
+        </form>
 
-    <script>
-        const productPriceText = document.getElementById('product_price');
-        let couponApplied = false;
-        let selectedProduct = false;
-
-        function selectProduct(productName, productPrice) {
-            document.getElementById('selected_product').value = productName;
-            productPriceText.value = "$" + productPrice
-            couponApplied = false;
-            selectedProduct = true;
-        }
-
-        async function applyCoupon(event) {
-            event.preventDefault(); // Prevent page refresh
-
-            const couponCode = document.getElementById('coupon').value;
-
-            const response = await fetch('/apply_coupon', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ coupon_code: couponCode })
-            });
-
-            const result = await response.json();
-
-            if (response.ok && couponApplied !== true) {
-                if (selectedProduct === true) {
-                    alert(`¡Se ha aplicado un cupón! Descuento: ${result.discount}%`);
-
-                    let finalPrice = parseInt(productPriceText.value.replace("$", ""));
-
-                    productPriceText.value = `$${finalPrice - finalPrice / 100 * result.discount}`;
-
-                    couponApplied = true;
-                }
-                else {
-                    alert("Seleccione un producto");
-                }
-            } else if (couponApplied) {
-                alert("¡Ya ha agregado un cupón!");
-            }
-            else {
-                alert(result.message);
-            }
-        }
-    </script>
+        <table class="w-full table-auto border-separate border-spacing-0 rounded-lg overflow-hidden shadow-md"
+            id="products-table">
+            <thead>
+                <tr class="bg-gray-100">
+                    <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Nombre</th>
+                    <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Categoría</th>
+                    <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Valoración</th>
+                    <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Precio</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if products %}
+                {% for product in products %}
+                <tr class="product-row hover:bg-gray-50 cursor-pointer"
+                    onclick="window.location.href='/order?product={{ product.Nombre }}'">
+                    <td class="px-6 py-4 border-b border-gray-200">{{ product['nombre'] }}</td>
+                    <td class="px-6 py-4 border-b border-gray-200">{{ product['categoria'] }}</td>
+                    <td class="px-6 py-4 border-b border-gray-200">{{ product['clasificacion'] }}</td>
+                    <td class="px-6 py-4 border-b border-gray-200">${{ product['precio'] }}</td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                <tr>
+                    <td colspan="4" class="px-6 py-4 text-center text-sm text-gray-500">Seleccione una categoría</td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
 </body>
 
 </html>

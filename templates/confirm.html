@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmar Compra</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        /* Ensure text wraps to prevent overflow */
+        #datos_cliente .grid div {
+            word-wrap: normal;
+            max-width: 100%;
+        }
+
+        /* Add horizontal scroll to prevent overflow when content is too long */
+        #datos_cliente .grid div {
+            overflow-x: hidden;
+        }
+
+        /* Optional: Hide overflow in the grid container */
+        #datos_cliente .grid {
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="min-h-screen bg-gray-100 flex flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-md w-full space-y-8 bg-white p-10 rounded-xl shadow-lg">
+            <div class="text-center">
+                <h2 class="text-3xl font-extrabold text-gray-900 mb-6">Confirmación de Pedido</h2>
+            </div>
+
+            <div id="datos_cliente" class="bg-gray-50 border border-gray-200 rounded-lg p-6 mb-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="text-sm font-medium text-gray-600">RUT:</div>
+                    <div class="font-bold text-gray-900" id="client_rut">{{ Order.Rut }}</div>
+
+                    <div class="text-sm font-medium text-gray-600">Nombre:</div>
+                    <div class="font-bold text-gray-900" id="client_name">{{ Order.Name }}</div>
+
+                    <div class="text-sm font-medium text-gray-600">Correo:</div>
+                    <div class="font-bold text-gray-900" id="client_email">{{ Order.Email }}</div>
+
+                    <div class="text-sm font-medium text-gray-600">Dirección:</div>
+                    <div class="font-bold text-gray-900" id="client_address">{{ Order.Address }}</div>
+
+                    <div class="text-sm font-medium text-gray-600">Producto:</div>
+                    <div class="font-bold text-gray-900" id="client_product">{{ Order.Product }}</div>
+
+                    <div class="text-sm font-medium text-gray-600">Total:</div>
+                    <div class="font-bold text-green-600 text-lg" id="product_price">${{ Order.Total }}</div>
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                <div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Aplicar un cupón</h3>
+                    <div class="flex items-center space-x-4">
+                        <input type="text" id="coupon" required
+                            class="flex-grow appearance-none rounded-md relative block px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                            placeholder="Ingrese código de cupón">
+                        <button onclick="applyCoupon(event)"
+                            class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            Aplicar
+                        </button>
+                    </div>
+                </div>
+
+                <button id="confirm_order"
+                    class="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                    Confirmar compra
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("confirm_order").addEventListener("click", function (event) {
+            const orderData = {
+                rut: document.getElementById("client_rut").textContent.trim(),
+                name: document.getElementById("client_name").textContent.trim(),
+                email: document.getElementById("client_email").textContent.trim(),
+                address: document.getElementById("client_address").textContent.trim(),
+                product: document.getElementById("client_product").textContent.trim(),
+                total: document.getElementById("product_price").textContent.trim().replace("$", "")
+            };
+
+            // Disable button to prevent multiple submissions
+            const confirmButton = event.target;
+            confirmButton.disabled = true;
+
+            fetch('/order-confirm', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(orderData)
+            })
+                .then(response => response.text())  // Expecting a URL or HTML response
+                .then(html => {
+                    // You can check if the response is an HTML or a URL
+                    if (html.startsWith('http')) {
+                        // If the response is a URL, redirect the user
+                        window.location.href = html;  // Redirect to the new page
+                    } else {
+                        // If you receive HTML content, you can still replace the body if needed
+                        document.body.innerHTML = html;
+                    }
+                });
+        });
+
+
+
+
+        let couponApplied = false;
+
+        async function applyCoupon(event) {
+            event.preventDefault(); // Prevent page refresh
+
+            const couponCode = document.getElementById('coupon').value;
+            const productPriceText = document.getElementById('product_price');
+
+            if (!couponCode.trim()) {
+                alert("Ingrese un código de cupón válido.");
+                return;
+            }
+
+            try {
+                const response = await fetch('/apply_coupon', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ coupon_code: couponCode })
+                });
+
+                const result = await response.json();
+
+                if (response.ok && !couponApplied) {
+                    const originalPrice = parseFloat(productPriceText.textContent.replace("$", ""));
+                    const discount = parseFloat(result.discount);
+
+                    if (isNaN(originalPrice) || isNaN(discount)) {
+                        alert("Error al calcular el precio final.");
+                        return;
+                    }
+
+                    const discountedPrice = originalPrice - (originalPrice * (discount / 100));
+                    productPriceText.textContent = `$${discountedPrice}`;
+                    couponApplied = true;
+
+                    alert(`¡Se ha aplicado un cupón! Descuento: ${result.discount}%`);
+                } else if (couponApplied) {
+                    alert("¡Ya ha agregado un cupón!");
+                } else {
+                    alert(result.message || "Error al aplicar el cupón.");
+                }
+            } catch (error) {
+                alert("Error en la solicitud. Intente nuevamente.");
+                console.error("Error:", error);
+            }
+        }
+        async function submitReview(event) {
+            event.preventDefault(); // Prevent the form's default behavior
+
+            // Hide the form after submission
+            document.getElementById('reviewForm').style.display = 'none';
+            document.getElementById('reviewState').textContent = '¡Gracias!';
+
+            // Collect the form data
+            const reviewer_name = '{{ Order.Name }}';  // Flask variable for the reviewer name
+            const reviewContent = document.getElementById('review').value;
+            const rating = parseInt(document.getElementById('rating').value, 10);
+            const product = '{{ Order.Product }}';  // Flask variable for the product name
+
+            // Send the data to the Flask server
+            const response = await fetch('/submit_review', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'  // Add this header
+                },
+                body: JSON.stringify({
+                    reviewer_name: reviewer_name,
+                    review: reviewContent,
+                    rating: rating,
+                    product_name: product
+                })
+            });
+
+            // Handle response if necessary
+            const result = await response.json();
+            console.log(result.message);
+        }
+    </script>
+</body>
+
+</html>
