@@ -97,7 +97,6 @@ def receive_order():
     
     return render_template("buy.html", Order=order)
 
-# Método para guardar la reseña
 @app.route('/submit_review', methods=['POST'])
 def submit_review():
     data = request.get_json()
@@ -106,33 +105,34 @@ def submit_review():
     rating = data.get('rating')
     product = data.get('product_name')
 
+    # Input validation
     if not review or not product or rating is None:
         return jsonify({"message": "Invalid data"}), 400
 
+    # Open a single connection for both the reviews and products
+    conn = sqlite3.connect('turismodatos.db')
+    cursor = conn.cursor()
 
-    reviews_conn = sqlite3.connect('turismodatos.db')
-    reviews_cursor = reviews_conn.cursor()
-    reviews_cursor.execute(
+    # Insert the new review into the Reseñas table
+    cursor.execute(
         'INSERT INTO Reseñas (cliente_nombre, producto, comentario, clasificacion) VALUES (?, ?, ?, ?)',
-        (reviewer_name, review, rating, product)
+        (reviewer_name, product, review, rating)
     )
-    reviews_conn.commit()
+    conn.commit()
 
-    reviews_cursor.execute('SELECT AVG(clasificacion) FROM reseñas WHERE producto = ?', (product,))
-    avg_rating = reviews_cursor.fetchone()[0]
+    # Calculate the average rating for the product
+    cursor.execute('SELECT AVG(clasificacion) FROM Reseñas WHERE producto = ?', (product,))
+    avg_rating = cursor.fetchone()[0]
 
-    products_conn = sqlite3.connect('turismodatos.db')
-    products_cursor = products_conn.cursor()
-
+    # Update the product's rating if the average exists
     if avg_rating is not None:
-        products_cursor.execute('UPDATE productos SET clasificacion = ? WHERE nombre = ?', (avg_rating, product))
-        products_conn.commit()
+        cursor.execute('UPDATE Productos SET clasificacion = ? WHERE nombre = ?', (avg_rating, product))
+        conn.commit()
 
-    reviews_conn.close()
-    products_conn.close()
-
+    conn.close()
 
     return jsonify({"message": "Review submitted successfully!"}), 200
+
 
 
 # Método para entregar cupón con su descuento
